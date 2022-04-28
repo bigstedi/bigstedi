@@ -1,0 +1,108 @@
+---
+title: 'Ex. No 2 : Time Series Forcasting'
+output:
+  pdf_document: default
+  word_document: default
+  html_document:
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+
+* * *
+## Aim: Time series forcasting using ARIMA and auto ARIMA 
+
+# Understand time-series operations/functions and forecast the annual gdp growth rate of India based on given instructions. . 
+
+## Setup
+
+### Load necessary packages using library(packagename)
+```{r}
+library(forecast)
+library(tseries)
+```
+
+
+### Load the data
+```{r}
+gdp<-read.csv("gdp.csv")
+```
+
+
+* * *
+# Algorithm
+
+1. Import the required libraries
+2. Import the dataset to be used in the experiment
+3. Convert the data into a Time Series using ts command. Also specify the maximum, minimum and frequency in it.
+4. Plot the dataset.
+5. Perform the ACF test (Auto Correlation function) for stationary test.
+6. Perform the ADF test (Augmented Dicky-Fuller test)) for stationary test..
+7. Use Auto ARIMA to find the model with  lowest aic or Akaike's information criterion.
+8. Forecast the model and plot the forecasted data along with the original one.
+9. Print the accuracy and additonal model metrics
+
+
+* * *
+
+# Code : 
+
+## Convert the data into time series
+```{r}
+gdpts<-ts(gdp$GDP_gr,start = min(gdp$Year),end = max(gdp$Year), frequency = 1)
+```
+
+## Plot the data
+
+```{r}
+class(gdpts)
+plot(gdpts)
+```
+
+## Stationarity Test
+```{r}
+acf(gdpts)
+adf.test(gdpts)
+```
+
+ Both ACF and ADF test indicate stationarity. As in ACF the data decays and does not cross the blue line. In adf p value is less tham 0.05.
+ 
+## ARIMA Model 
+ 
+```{r}
+gdpmodel=auto.arima(gdpts,ic="aic",trace=TRUE)
+```
+ 
+## Forecast for 5 years with 95% confidence interval.
+ 
+```{r}
+gdpf=forecast(gdpmodel,level=c(95),h=5)
+gdpf
+
+```
+
+## Plot the data along with its forecast
+```{r}
+plot(gdpf)
+```
+
+## Model Metrics
+
+```{r}
+accuracy(gdpmodel)
+```
+
+
+* * *
+# Inference  
+
+From the ACF test and ADF test it can be observed that the data used here is stationary. That is the p value of the data is less than 0.05 and the data's acf plot does not cross the blue line. With the help of auto ARIMA we are able to find the best ARIMA model with the lowest aic or Akaike's information criterion or aic. It
+denotes the estimator's value for predictor error for that particular model. From auto ARIMA, we get the best model with lowest aic as ARIMA(0,1,1). From that we can infer that there are zero auto regressive terms for this ARIMA model, there is one degree of differentiation and one moving average term involved. 
+
+The model performs well. With the help of predicted data or the data forecast using the ARIMA model for next 5 years. THe model yields a ME of 0.27 which is reasonably good. Also when we see plot along with the forecast we can see that the forecasted value are following the trend of previous values.
+
+
+
+* * *
+

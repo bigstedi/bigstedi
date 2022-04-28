@@ -1,0 +1,178 @@
+---
+title: 'Ex. No 3 : Regression and Forecasting on Weather Data '
+output:
+  pdf_document: default
+  word_document: default
+  html_document:
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+
+* * *
+## Aim: Perform multi-regression and forecasting on weather related dataset “weatherHistory2016.csv”
+
+
+
+## Setup
+
+### Load necessary packages using library(packagename)
+```{r}
+library(forecast)
+library(tseries)
+library(dplyr)
+library(corrplot)
+```
+
+
+### Load the data
+```{r}
+weather<-read.csv("weatherHistory2016.csv")
+```
+
+### Subset of Weather
+```{r}
+weatherSub = tail(weather, 720) # 1 Months 30 Days 24 Points 
+```
+
+
+* * *
+# Algorithm
+
+## Linear Regression Model
+
+1. Import the required libraries
+2. Import the dataset to be used in the experiment
+3. Split the dataset using a fixed fraction or ratio
+4. Identify the independent and dependant variables.
+5. Plot a line or scatter plot for the vairables.
+6. Find the correaltion coefficent between each of the variable so selected.
+7. Design the Linear Regression Model with positive correaltion coefficent.
+8. Draw the regression line plot for the regression model so designed
+9. Descirbe the Data/Model summary.
+
+
+## ARIMA Model
+
+1. Import the required libraries
+2. Import the dataset to be used in the experiment
+3. Convert the data into a Time Series using ts command. Also specify the maximum, minimum and frequency in it.
+4. Plot the dataset.
+5. Perform the ACF test (Auto Correlation function) for stationary test.
+6. Perform the ADF test (Augmented Dicky-Fuller test)) for stationary test..
+7. Use Auto ARIMA to find the model with  lowest aic or Akaike's information criterion.
+8. Forecast the model and plot the forecasted data along with the original one.
+9. Print the accuracy and additonal model metrics
+
+
+* * *
+
+# Linear Regression Model Code:
+
+## Select Numerical Features
+```{r}
+datas <- select_if(weatherSub, is.numeric)
+trail=sample_frac(datas,0.7)
+```
+
+## Correlation Test
+```{r}
+corrplot(cor(trail))
+```
+```{r}
+colnames(datas) 
+```
+
+## Selecting Feature with positive correlation
+
+```{r}
+poscorrd = datas[c("Temperature..C.","Humidity","Visibility..km.","Apparent.Temperature..C.")]
+```
+
+## Construct Model
+
+```{r}
+lmodel=lm(Temperature..C.~Humidity+Visibility..km.+Apparent.Temperature..C., data = poscorrd)
+```
+
+## Predict the temperature values
+
+```{r}
+predict(lmodel, data = sample_frac(datas,0.3)[c("Humidity","Visibility..km.","Apparent.Temperature..C.")]) #Predicting the temperature value
+```
+
+
+
+These are the predicted temperature value for next 30 days.
+
+```{r}
+summary(lmodel)
+```
+
+We have positive correlation coefficient indicating strong positive relation between the choosen variables. Such that if one variable increase the other one also does. The R Squared value shows how much variation of a dependent variable is explained by the independent variable in regression model.
+Here, th Adjusted R square value is 0.9909. So 90% variability of y is explained by x.For a model to be accepted and to reject the alternate hypothesis, we need to have a confidence interval of at least 95%. Hence p value should be less than 0.05. Here, p value is 2.2e-16 which is much less than the accepted value. Also F statistic has high value 2.607e+04 on 3 and 716 Degrees of Freedom. Hence, this hypothesis is accepted and the model outputs optimal results.
+
+
+# ARIMA Model Code : 
+
+## Convert the data into time series
+```{r}
+weatherSubts<-ts(weather$Temperature..C.,start=as.Date("2016-10-01"), end=as.Date("2016-12-31"),frequency = 24)
+```
+
+
+## Plot the data
+
+```{r}
+class(weatherSubts)
+plot(weatherSubts)
+```
+
+
+## Stationarity Test
+```{r}
+acf(weatherSubts)
+adf.test(weatherSubts)
+```
+
+ Both ACF and ADF test indicate stationarity. As in ACF the data decays and does not cross the blue line. In adf p value is less tham 0.05.
+ 
+## ARIMA Model 
+ 
+```{r}
+weatherSubtsmodel=auto.arima(weatherSubts,ic="aic",trace=TRUE)
+```
+ 
+## Forecast for 30 Days with 95% confidence interval.
+ 
+```{r}
+weatherSubtsmodelf=forecast(weatherSubtsmodel,level=c(95),h=30)
+weatherSubtsmodelf
+
+```
+
+## Plot the data along with its forecast
+```{r}
+plot(weatherSubtsmodelf)
+```
+
+## Model Metrics
+
+```{r}
+accuracy(weatherSubtsmodel)
+```
+
+
+* * *
+# Inference  
+
+From the ACF test and ADF test it can be observed that the data used here is stationary. That is the p value of the data is less than 0.05 and the data's acf plot does not cross the blue line. With the help of auto ARIMA we are able to find the best ARIMA model with the lowest aic or Akaike's information criterion or aic. It
+denotes the estimator's value for predictor error for that particular model. From auto ARIMA, we get the best model with lowest aic as ARIMA(2,0,2)(2,1,0)[24].
+
+The model performs well. With the help of predicted data or the data forecast using the ARIMA model for next 30 Days. The model yields a ME of 0.0174 which is reasonably good. Also when we see plot along with the forecast we can see that the forecasted value are following the trend of previous values.
+
+
+
+* * *
+

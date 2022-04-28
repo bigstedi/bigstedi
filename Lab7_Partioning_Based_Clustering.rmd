@@ -1,0 +1,136 @@
+---
+title: 'Ex. No 7 : Partitioning Based Clustering'
+output:
+  word_document: default
+  pdf_document: default
+  html_document:
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+
+* * *
+## Aim: Partitioning Based Clustering for USArrests Dataset
+
+#To study and understand the following operations/functions on ‘iris’ data and perform similar operations on ‘USArrests’ dataset based on given instructions. 
+
+#Load necessary packages using library(packagename)
+```{r}
+library(factoextra) 
+library(cluster)
+```
+
+
+#Load the data
+```{r}
+data <- read.csv("USArrests.csv",row.names=1) 
+df <- scale(data) 
+```
+
+
+* * *
+
+# Algorithm:
+
+1. Import the required libraries
+2. Import the USArrests dataset
+3. Scale the data accordingly
+4. Remove features which are not required
+5. Find the Elbow Value
+5.1. Find the elbow value using for loop (
+5.2. Find the elbow value using fviz_nbclust
+6. Design the K Means model
+7. Draw the graph of clustering(For K Means)
+8. Print the parameters for k Means model
+9. Design K Medoids model
+10. Print the graph of clustering model (For K Medoids)
+11. Print the parameters for k Medoids model
+
+* * *
+## Import libraries
+
+```{r}
+library(cluster) 
+library(factoextra)
+```
+
+## Import dataset
+```{r}
+rm(list=ls()) ## clear env
+data <- read.csv("USArrests.csv",row.names=1) ## read data and first row is the name of the features
+```
+
+## Scale the data
+```{r}
+df<-scale(data)
+df
+```
+
+
+### There are two ways to find the centers for Kmeans
+
+## Centers using for loop
+
+```{r}
+Kmax <- 15
+WCSS <- rep(NA,Kmax)
+nClust <- list()
+for (i in 1:Kmax){
+ fit<- kmeans(df,i)
+ WCSS[i] <- fit$tot.withinss
+ nClust[[i]] <- fit$size
+}
+plot(1:Kmax,WCSS,type="b")
+```
+## Method two using factoextra library
+
+```{r}
+fviz_nbclust(df, kmeans, method = "wss", k.max = 15)
+
+```
+
+## Elbow point and ploting clusters
+
+```{r}
+fit<-kmeans(df,6)
+fviz_cluster(fit, df)
+print(fit)
+```
+
+## Print paramenters for k means model
+
+```{r}
+print(fit$cluster)
+print(fit$centers)
+print(fit$withinss)
+print(fit$tot.withinss)
+print(fit$size)
+```
+
+
+## Perform K-Medoids
+
+```{r}
+fitm <- pam(df, 6, metric = "manhattan") # K-Medoids
+fviz_cluster(fitm, df)
+print(fitm)
+```
+## Print paramenters for k Medoids model
+
+```{r}
+fitm$medoids
+fitm$clustering
+```
+* * *
+## Inference and Result
+
+
+We have designed and implemented a classifer for USArrests dataset.We used two methods K Means and K Medoids to classify the dataset we were able to find
+clusters or the elbow point by finding the cost function for clustrs ranign from 1 to 10 and then plotting it. We then take a point where the graph starts to plateau. Here the gra[h plateaus at around value 6. We are using that to do K Means and K Medoids CLustering.
+
+Since there is no overlap in the model so obtianed by the K Means Classifier in comparison to the K Mediods onne, which has class over in few centers.
+
+
+* * *
+

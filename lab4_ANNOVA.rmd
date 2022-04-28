@@ -1,0 +1,83 @@
+---
+title: 'Ex. No 4 : ANNOVA'
+output:
+  pdf_document: default
+  word_document: default
+  html_document:
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+
+* * *
+## Aim: Perform ANOVA test and determine the statistical differences between the means of individual groups given in the data
+
+## Setup
+
+### Load necessary packages using library(packagename)
+```{r}
+library(dplyr)
+
+```
+
+
+### Load the data
+```{r}
+
+data <- read.csv(file = "color-anova-example.csv")
+```
+
+
+* * *
+# Algorithm
+
+1. Import the required libraries
+2. Import the dataset to be used in the experiment
+3. Group by color and measure the mean for each group
+4. Perform ANNOVA test
+5. Get the ANNOVA test summary
+6. If Pr(>F) is less than 0.05 perform Tukey HSD test.
+
+
+* * *
+
+# Code
+
+## Group by color and find mean for each group
+
+```{r}
+group_by(data,color) %>% summarise(count = n(),mean = mean(response, na.rm =TRUE))
+```
+
+
+
+## ANNOVA
+
+```{r}
+ANOVA <- aov(response~color, data = data)
+summary(ANOVA)
+```
+
+### -> As Pr(>F) value is less than 0.05, we will be rejecting the null hypothesis.
+
+
+## Tukey HSD (Tukey Honest Significant Differences)
+
+```{r}
+TukeyHSD(ANOVA)
+```
+
+
+* * *
+# Inference  
+
+From the ANNOVA summary we can say that SSC is 857.2 and SSE is 1996.4 , MSC is 428.6 and MSC is 28.9 , therefore the F Statistic probabistic value is 14.81. When the F statistic value is more than 0.05 we can infer that F < F_Critical and accept the null hypothesis. Here, the Pr(>F) value is 4.4e-06 which is much less than 0.05 therefore the condition becomes void and we reject the null hypothesis hence, F > F_Critical. In the selected null hypothesis not much of difference can be observed between either of the groups or samples present in the data base.
+
+As we are rejecting the null hypothesis we need to identify which group or sample is different from the population and which group belong to the same population. TO ascertain this we perform THSD , better know as Tukey Honest Significant Differences. On performing this test we got adjusted p value and if the value is less than 0.05 then those two groups don't belong to the selected population otherwise they do. Here, red-blue and red-green have adjusted p value less than 0.05, but green-blue has a adjusted p value greater than 0.05. From this we can say that red-blue and red-green bleong to a common population of which green-blue is not a part of. From this we can tell that blue and green belong to the same sample population. But red is not a part of it and belongs to a seperate population as the mean value of it is high.
+
+
+
+
+* * *
+

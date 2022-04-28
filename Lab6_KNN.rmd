@@ -1,0 +1,107 @@
+---
+title: 'Ex. No 6 : K- NN algorithm '
+output:
+  pdf_document: default
+  word_document: default
+  html_document:
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+
+* * *
+## Aim: Understand the following operations/functions on to perform K- NN algorithm and perform similar operations on ‘iris’ dataset based on given instructions.
+
+
+
+## Setup
+
+### Packages 
+```{r}
+library(caTools) 
+library(class)
+```
+
+
+### Load the data
+```{r eval=FALSE, include=FALSE}
+rm(list=ls())
+iris<-read.table(file.choose(),sep=',')
+View(iris)
+```
+
+
+
+
+* * *
+
+## Dataset Description
+
+# Name of the Dataset IRIS Dataset
+
+# Description of the fields
+```{r}
+str(iris)
+```
+
+
+# Basic commands to describe dataset
+```{r}
+summary(iris)
+```
+
+
+* * *
+
+# Implement KNN Algorithm
+
+## Splitting the Dataset
+```{r}
+splitd<-sample.split(iris,SplitRatio = 0.8)
+train<-subset(iris,splitd=="TRUE")
+test<-subset(iris,splitd=="FALSE")
+```
+
+## Normalize
+```{r}
+norm<-function(x) {((x-min(x))/(max(x)-min(x)))}
+mytrain<-as.data.frame(lapply(train[,-5], norm))
+mytest<-as.data.frame(lapply(test[,-5], norm))
+```
+
+## Summary
+
+```{r}
+summary(train[,1:4])
+summary(mytrain[,1:4])
+```
+
+## Here the Labels are in the 5th Column
+
+```{r}
+pred<-knn(mytrain,mytest,train[,5],k=21)
+cf<-table(pred,test[,5])
+cf
+```
+
+## Accuracy
+```{r}
+ACCC = (cf[[1,1]]+cf[[2,2]]+cf[[3,3]])/sum(cf)
+ACCC
+```
+
+
+* * *
+# Inference  
+
+
+
+
+In KNN algorithm we find 5 nearest point  if Number of Neighbors is selected as 5. Then nearest points re identified using euclidean distance. Points near a neighbour point can be called as class A. In order bring the variables in a similar scale we need to normalize the data. The model performs well in both Iris-setosa and Iris-vriginica case.
+
+But in Iris-Versicolour it classicism a point in iris Virginica class.There by bringing down the accuracy. The accuracy observed here is 96.667%
+
+
+* * *
+

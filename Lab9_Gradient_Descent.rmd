@@ -1,0 +1,80 @@
+---
+title: 'Ex. No 9 : Gradient Descent using mtcars dataset'
+output:
+  pdf_document: default
+  word_document: default
+  html_document:
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+
+* * *
+## Aim: To implement Gradient Descent using mtcars dataset
+
+* * *
+
+## Dataset Description
+
+#Name of the Dataset mtcars
+
+#Description of the fields 
+```{r}
+str(mtcars)
+```
+
+
+#Basic commands to describe dataset
+```{r}
+summary(mtcars)
+```
+
+* * *
+# Algorithm
+
+1. Load the mtcars dataset
+2. Import the necessary libraries
+3. Write the Gradient Descent Function
+4. Add Convergence Thresholf iteration and itercept as its paramter
+5. Write the logic for calculation
+6. Compute the intercept , optimal slope and loss function
+7. Compute the same using lm
+8. Verify the same
+
+* * *
+
+```{r}
+gd <- function(x,y,m,c,alpha,con_thr,iter){
+  iterations = 0
+  Lf <- 0
+  while(iterations<=iter){
+    y_pred<-m*x+c
+    Lf_new<-0.5*sum(y_pred-y)^2
+    m<-m-alpha*sum((y_pred-y)*x)
+    c<-c-alpha*sum(y_pred-y)
+    Lf<-Lf_new
+    if (m=='NaN')
+    {
+      break
+    }
+    iterations = iterations+1
+  }
+  return(paste("optimal intercept:",c,"optimal slope:",m,"loss function:",Lf))
+}
+
+```
+```{r}
+data1 <- mtcars
+plot(data1$mpg,data1$wt, col="red", pch =20)
+gd(data1$wt,data1$mpg,-0.2,32,0.003,0.00001,1000)
+lr<-lm(data1$mpg~data1$wt)
+lr
+```
+
+* * *
+## Conclusion
+
+We perform gradient descent on mtcars dataset and obtain the intercept and slope values. We also find the loss function value. We verify the values so obtained from the linear model created by using the lm function. We obtain the same values.
+* * *
+

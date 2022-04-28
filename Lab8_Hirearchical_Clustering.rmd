@@ -1,0 +1,188 @@
+---
+title: 'Ex. No 8 : Hirearchical Clustering '
+output:
+  pdf_document: default
+  word_document: default
+  html_document:
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+
+* * *
+# Aim:- To perfrom heirarchical clustering on USArrest and IRIS Dataset
+
+# Algorithm:
+
+1. Import the libraries
+2. Import the dataset
+3. Scale the data accrodingly
+4. Remove the features which are not required
+5. Identify the euclidean distance among the points
+7. Plot the dendogram
+8. Divide the dendogram into clusters according to chosen k value
+9. Create K distinct groups
+10. Print the cluster dendogram
+
+
+
+## Setup
+
+# Load necessary packages using library(packagename)
+```{r}
+library(class) ##### library for knn
+library(cluster) ##### for clustering
+
+```
+
+# Load the data
+## USArrests Dataset
+```{r}
+data<-read.csv("USArrests.csv",row.names = 1)
+
+```
+## Iris Dataset
+```{r}
+
+data1<-read.csv("iris.csv",row.names = 1)
+
+```
+
+* * *
+
+## Dataset Description
+
+## Dataset Description
+
+### USArrests
+
+#### Name of the Dataset USArrests
+
+#### Description of the fields
+```{r}
+str(data)
+```
+
+#### Basic commands to describe dataset
+```{r}
+summary(data)
+```
+
+### Iris Dataset
+
+#### Name of the Dataset IRIS Dataset
+
+#### Description of the fields
+```{r}
+str(data1)
+```
+
+#### Basic commands to describe dataset
+```{r}
+summary(data1)
+```
+
+
+* * *
+
+# USArrests Dataset
+
+## Scale the datah
+```{r}
+df<-scale(data)
+df
+df<-df[,-1]
+```
+## Find the Euclidean Distance from the points
+
+```{r}
+ed<-dist(df,method="euclidean")
+
+```
+
+## Perform Hirearchial Clustering
+```{r}
+hercluster<-hclust(ed,method="complete")
+```
+
+## Plot the Dendogram
+```{r}
+plot(hercluster)
+```
+
+## Divde the clusters
+```{r}
+cluster<-cutree(hercluster,k=4)
+cluster
+```
+
+
+## Represent the data points as groups
+```{r}
+USA.tree <- hclust(dist(df))
+plot(hclust(dist(df))) #if I use plot(USA.tree) returns an error
+x <- rect.hclust(USA.tree, k=4)
+
+x
+
+```
+# Iris Dataset
+
+
+## Scale the data
+```{r}
+df1<-scale(data1)
+df1
+df1<-df1[,-1]
+```
+
+## Find the Euclidean Distance from the points
+
+```{r}
+ed1<-dist(df1,method="euclidean")
+
+```
+
+## Perform Hirearchial Clustering
+```{r}
+hercluster1<-hclust(ed1,method="complete")
+```
+
+## Plot the Dendogram
+```{r}
+plot(hercluster1)
+```
+
+
+
+## Divde the clusters
+```{r}
+cluster1<-cutree(hercluster1,k=4)
+cluster1
+```
+
+
+## Represent the data points as groups
+```{r}
+iris1 <- hclust(dist(df1))
+plot(hclust(dist(df1))) #if I use plot(USA.tree) returns an error
+y <- rect.hclust(iris1, k=4)
+
+y
+
+
+```
+
+* * *
+## Conclusion
+
+USArrests as well as Iris dataset are classifed into four clusters as the k value chosen in this experiment is 4. With the help of euclidean distance we identify the clusters. From this data the dendogram is drawn and it is divided in to 4 groups as k has a value of 4. 
+
+In USArrests dataset, 4th group has the highest number of data points whereas the the 2nd Group has the least this shows that there is irregularity in the clustering. This indicates that higher k value should be chosen in order to equally distribute the data points.
+
+In the Iris dataset, 2nd group has highest number of data points on the othr hand 4ht group has the least. This also shows the irregularity in the clustering. This helps to identify the case where we need to increase the number of clusters i.e the k value from 4 to a higher value inorder to equally distribute points among the clusters.
+
+
+* * *
+

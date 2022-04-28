@@ -1,0 +1,99 @@
+---
+title: 'Ex. No 1 : Liner Regression'
+output:
+  pdf_document: default
+  word_document: default
+  html_document:
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+* * *
+## Aim: To develop linear regression model for the given data using R programming and to verify the null hypothesis 
+
+#To Understand the following operations/functions on random dataset and perform similar operations on mtcars and ‘data.csv’ dataset based on given instructions. 
+
+## Setup
+
+### Load necessary packages using library(packagename)
+```{r}
+library(dplyr)
+
+```
+
+
+### Load the data
+```{r}
+data1 <- mtcars
+data2 <- read.csv(file = 'data.csv')
+```
+
+
+* * *
+# Algorithm
+
+1. Import the required libraries
+2. Import the dataset to be used in the experiment
+3. Split the dataset using a fixed fraction or ratio
+4. Identify the independent and dependant variables.
+5. Plot a line or scatter plot for the vairables.
+6. Find the correaltion coefficent between each of the variable so selected.
+7. Design the Linear Regression Model with positive correaltion coefficent.
+8. Draw the regression line plot for the regression model so designed
+9. Descirbe the Data/Model summary.
+
+
+* * *
+# Statistic:
+
+## Case 1: mtcars
+
+```{r}
+trail=sample_frac(data1,0.7) # Split the Data with ratio as 0.7
+x=trail$cyl
+y=trail$disp
+plot(x,y,main='scatter plot',xlab='cyl',ylab='disp')
+cor.test(x,y)
+lmodel=lm(y~x)
+abline(lmodel,col='blue')
+```
+
+```{r}
+summary(lmodel)
+```
+
+## Case 2: Custom Data
+
+```{r}
+trail=sample_frac(data2,0.7)
+x=trail$Index
+y=trail$Weight
+plot(x,y,main='scatter plot',xlab='Index',ylab='Weight')
+cor.test(x,y)
+lmodel=lm(y~x)
+abline(lmodel,col='Purple')
+```
+
+```{r}
+summary(lmodel)
+```
+
+
+* * *
+# Inference  
+
+## Case 1: mtcars
+
+We have positive correlation coefficient with a value of 0.9132008 indicating strong positive relation between the choosen variables. Such that if one variable increase the other one also does. The R Squared value shows how much variation of a dependent variable is explained by the independent variable in regression model.
+Here, th Adjusted R square value is 0.82. So 82% variability of y is explained by x.For a model to be accepted and to reject the alternate hypothesis, we need to have a confidence interval of at least 95%. Hence p value should be less than 0.05. Here, p value is 3.048e-09 which is much less than the accepted value. Also F statistic has high value 100.4 on 1 and 20 Degrees of Freedom. Hence, this hypothesis is accepted and the model outputs optimal results.
+
+## Case 2: Custom Data
+
+We have positive correlation coefficient with a value of 0.7860875 indicating strong positive relation between the choosen variables. Such that if one variable increase the other one also does. The R Squared value shows how much variation of a dependent variable is explained by the independent variable in regression model.
+Here, th Adjusted R square value is 0.6168. So 61.68% variability of y is explained by x.For a model to be accepted and to reject the alternate hypothesis, we need to have a confidence interval of at least 95%. Hence p value should be less than 0.05. Here, p value is 2.2e-16 which is much less than the accepted value. Also F statistic has high value 562.8 on 1 and 348 Degrees of Freedom. Hence, this hypothesis is accepted and the model outputs optimal results.
+
+
+
+* * *
+

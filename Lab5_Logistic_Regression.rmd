@@ -1,0 +1,119 @@
+---
+title: 'Ex. No 5 : Logistic Regression '
+output:
+  pdf_document: default
+  word_document: default
+  html_document:
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+
+* * *
+## Aim: Understand the following operations/functions on to perform logistic Regression and perform similar operations on ‘Social_Network_Ads’ dataset based on given instructions. 
+
+## Setup
+
+### Load necessary packages using library(packagename)
+```{r}
+library(dplyr)
+library(caTools) 
+```
+
+
+### Load the data
+```{r}
+
+mydata <- read.csv(file = "Social_Network_Ads.csv")
+```
+
+
+* * *
+# Algorithm
+
+1. Import the required libraries
+2. Import the dataset to be used in the experiment
+3. Split the dataset using a fixed fraction or ratio
+4. Design the GLM Model and print the model summary .
+5. Plot the model predictor output for both test and train data.
+6. Plot the confusion matrix.
+7. Find the accuracy of the model.
+
+
+
+* * *
+
+# Code
+
+## Split the data into Train and Test
+```{r}
+splitd<-sample.split(mydata,SplitRatio = 0.8) 
+train=subset(mydata,splitd=="TRUE") 
+test=subset(mydata,splitd=="FALSE") 
+train
+```
+
+
+
+## Factoring Data
+
+```{r}
+mydata$Gender<-as.factor(mydata$Gender) 
+mydata$Purchased<-as.factor(mydata$Purchased) 
+```
+
+
+## Building GLM Model
+
+```{r}
+mymodel <- glm(Purchased ~ Age+Gender+EstimatedSalary, data=train, family='binomial') 
+```
+
+### Model Summary
+```{r}
+summary(mymodel) 
+```
+
+### Train Predict and Plotting
+```{r}
+restrain<-predict(mymodel,train,type='response') 
+plot(restrain) 
+```
+
+### Test Predict and Plotting
+```{r}
+restest<-predict(mymodel,test,type='response') 
+plot(restest,col='red')
+```
+
+## Plot test purchased
+```{r}
+plot(test$Purchased) 
+```
+
+
+## Plotting Confusion Matrix 
+```{r}
+cfmatrix<-table(Act=test$Purchased, predt=restest>0.5) 
+cfmatrix 
+```
+
+## Accuracy
+
+```{r}
+Acc=(cfmatrix[[1,1]]+cfmatrix[[2,2]])/sum(cfmatrix) 
+Acc 
+```
+
+
+* * *
+# Inference  
+
+We have made the model with all the features. Here the gender variable has p value more than 0.5 so it is insignificant. Rest all of the features are significant. We plot the confusion matrix. From the predicted data 47 have been correctly classified into the negative class. Apart from that 4 of them have been classified incorrectly into the positive class. Model correctly predicted 19 for the positive class. But 5 of the remaining data point have been incorrectly classified into the negative class
+
+So, the observed accuracy is 82.5%
+
+
+* * *
+
